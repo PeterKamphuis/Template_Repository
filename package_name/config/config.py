@@ -1,7 +1,7 @@
 # OmegaConf setups
 
 from dataclasses import dataclass, field
-from multiprocessing import cpu_count
+import psutil
 from omegaconf import MISSING
 from typing import List, Optional
 import os
@@ -10,7 +10,10 @@ import os
 @dataclass
 class General:
     verbose: bool = True
-    ncpu: int = cpu_count()-1
+    try:
+        ncpu: int = len(psutil.Process().cpu_affinity())
+    except AttributeError:
+        ncpu: int = psutil.cpu_count()
     directory: str = os.getcwd()
     multiprocessing: bool = True
     #font_file: str = "/usr/share/fonts/truetype/msttcorefonts/Times_New_Roman.ttf"
