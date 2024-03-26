@@ -18,8 +18,8 @@ requirements = [
     'importlib_metadata',
 ]
 
-PACKAGE_NAME = 'TRM_errors'
-__version__ = '0.0.5'
+PACKAGE_NAME = 'package_name'
+__version__ = '0.0.0'
 
 
 with open("README.md", "r") as fh:

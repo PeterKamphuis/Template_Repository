@@ -6,12 +6,12 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'TRM_errors'
+project = 'package_name'
 copyright = '2023, P. Kamphuis'
 author = 'P. Kamphuis'
 
 release = '0.0'
-version = '0.0.5'
+version = '0.0.0'
 
 # -- General configuration
 

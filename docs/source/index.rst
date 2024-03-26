@@ -10,5 +10,5 @@ Contents
 
 
   Introduction, Installation & Easy use <readme.md>
-  The Configuration File <Advanced.rst>
+  The Package Explanations <Advanced.rst>
   Copyright <license.rst>
