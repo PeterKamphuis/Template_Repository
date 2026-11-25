@@ -1,8 +1,12 @@
 # OmegaConf setups
 
 from dataclasses import dataclass, field
-from omegaconf import OmegaConf,MISSING
+import psutil
+import package_name
+from omegaconf import MISSING,OmegaConf
 from typing import List, Optional
+import os
+import sys
 
 import os
 import psutil
@@ -22,24 +26,40 @@ class General:
 class defaults:
     print_examples: bool = False
     configuration_file: Optional[str] = None
-    general: General = General()
+    general: General =  field(default_factory = General)
 
 
 
-def setup_config(argv):
-    cfg = OmegaConf.structured(defaults)
+def process_input(argv):
+    if '-v' in argv or '--version' in argv:
+        print(f"This is version {package_name.__version__} of the program.")
+        sys.exit()
+    file_name = 'script_name_defaults.yml'
+    program = 'script_name'
     
+    if '-h' in argv or '--help' in argv:      
+        print(return_help_message(program,file_name))
+        sys.exit()
+    #First import the defaults 
+    cfg = OmegaConf.structured(defaults)
+    #if ncpu is the total available remove 1
+    if cfg.ncpu == psutil.cpu_count():
+        cfg.ncpu -= 1
+
+    # read command line arguments anything list input should be set in brackets '' e.g. pyROTMOD 'rotmass.MD=[1.4,True,True]'
     inputconf = OmegaConf.from_cli(argv)
     cfg_input = OmegaConf.merge(cfg,inputconf)
+
+    # Print examples if requested
     if cfg_input.print_examples:
-        example_name = 'sofia2hdf5.yml'
-        with open(example_name,'w') as default_write:
-            default_write.write(OmegaConf.to_yaml(cfg))
-        print(f'''We have printed the file {example_name} in {os.getcwd()}.
-Exiting sofia2hdf5''')
+        with open(file_name,'w') as default_write:
+            default_write.write(OmegaConf.to_yaml(cfg_input))
+        print(f'''We have printed the file {file_name} in {os.getcwd()}.
+''')
         sys.exit()
 
-    if cfg_input.configuration_file:
+    #if a configuration file is provided read it
+    if not cfg_input.configuration_file is None:
         succes = False
         while not succes:
             try:
@@ -53,14 +73,21 @@ You have provided a config file ({cfg_input.configuration_file}) but it can't be
 If you want to provide a config file please give the correct name.
 Else press CTRL-C to abort.
 configuration_file = ''')
-    # We only allow the maximum cpus from the command line
-    if cfg.general.ncpu == psutil.cpu_count():
-        print(f'''The amount of requested cpus ({cfg.general.ncpu}) is equal to the total in the hardware, this is unwise.
-Therefore we lower it by one.
-If you really want to use the maximum cpus set it from the command line with general.ncpu=''')
-        cfg.general.ncpu -= 1
-    cfg = OmegaConf.merge(cfg,inputconf) 
-    #Further checks go below here
-
-        
+    # make sure the command line overwrite the file
+    cfg = OmegaConf.merge(cfg,inputconf)
+    
+   
     return cfg
+
+def return_help_message(program, file_name):
+    help_message = f'''
+Use {program} in this way:
+{program} configuration_file=inputfile.yml   where inputfile is a yaml config file with the desired input settings.
+{program} -h print this message
+{program} print_examples=true print a yaml file ({file_name}) with the default setting in the current working directory.
+in this file values designated ??? indicated values without defaults.
+
+All config parameters can be set directly from the command line by setting the correct parameters, e.g:
+{program} general.directory=/dir/ectory
+'''
+    return help_message   

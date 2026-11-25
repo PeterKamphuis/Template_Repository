@@ -3,11 +3,11 @@
 from package_name.config.config import setup_config
 from package_name.common.common import some_functions
 
+
 import sys
 import traceback
 import warnings
-import package_name
-import psutil
+from package_name.config.config import process_input
 from multiprocessing import get_context,Manager
 
 def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
@@ -20,21 +20,9 @@ def warn_with_traceback(message, category, filename, lineno, file=None, line=Non
 
 
 def main():
-    argv=sys.argv[1:]
-    if '-v' in argv or '--version' in argv:
-        print(f"This is version {package_name.__version__} of the program.")
-        sys.exit()
-
-    if '-h' in argv or '--help' in argv:
-        print('''
-Use package_name in this way:
-
-All config parameters can be set directly from the command line by setting the correct parameters, e.g:
-create_package_name def_file=cube.fits error_generator=tirshaker 
-''')
-        sys.exit()
-    cfg = setup_config(argv)
- 
+    argv = sys.argv[1:]
+    cfg = process_input(argv)
+    
     # for some dumb reason pools have to be called from main
     # !!!!!!!!Starts your Main Here
 

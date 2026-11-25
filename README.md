@@ -23,10 +23,10 @@ Installation
 
 Download the source code from the Github or simply install with pip as:
 
-  	pip install packagename
+  	pip install package_name
 
 This should also install all required python dependencies.
-We recommend the use of python virtual environments. If so desired a TRM_errors installation would look like:
+We recommend the use of python virtual environments. If so desired a package_name installation would look like:
 
   	python3 -m venv package_name_venv
 
@@ -41,7 +41,7 @@ You might have to restart the env:
 
   	source package_name_venv/bin/activate.csh
 
-Once you have installed FAT you can check that it has been installed properly by running FAT as.
+Once you have installed package_name you can check that it has been installed properly by running package_name as.
 
   	executable -v 
 
